@@ -1,39 +1,24 @@
-// Firebase configuration (replace with your own Firebase credentials)
-const firebaseConfig = {
-    apiKey: "your-api-key",
-    authDomain: "your-auth-domain",
-    databaseURL: "your-database-url",
-    projectId: "your-project-id",
-    storageBucket: "your-storage-bucket",
-    messagingSenderId: "your-messaging-sender-id",
-    appId: "your-app-id"
-};
+// Globale Variable für den Alarmstatus
+let alarms = [];
 
-// Initialize Firebase
-firebase.initializeApp(firebaseConfig);
-const database = firebase.database();
-
+// Referenzen zu den DOM-Elementen
 const alarmButton = document.getElementById('alarmButton');
 const status = document.getElementById('status');
 
-// Generate an anonymous ID for the player
-const playerId = `Player-${Math.floor(Math.random() * 1000)}`;
+// Funktion zum Hinzufügen eines Alarms
+const addAlarm = () => {
+    const playerId = `Player-${Math.floor(Math.random() * 1000)}`; // Anonyme Spieler-ID
+    const timestamp = new Date().toLocaleTimeString();
 
-// Listen for new alarms
-database.ref('alarms/').on('value', (snapshot) => {
-    const alarms = snapshot.val();
-    if (alarms) {
-        status.textContent = "Alarm ausgelöst von einem Spieler!";
-    } else {
-        status.textContent = "Keine Alarme gemeldet.";
-    }
-});
+    // Speichere den Alarm
+    alarms.push({ player: playerId, time: timestamp });
 
-// Trigger an alarm
+    // Aktualisiere den Status auf der Seite
+    status.textContent = `Alarm von ${playerId} um ${timestamp}!`;
+};
+
+// Event Listener für den Button
 alarmButton.addEventListener('click', () => {
-    database.ref('alarms/').set({
-        triggeredBy: playerId,
-        timestamp: Date.now()
-    });
-    alert("Alarm wurde ausgelöst!");
+    addAlarm();
+    alert("Alarm ausgelöst!");
 });
